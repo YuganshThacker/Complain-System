@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <nav>
+        <div class="nav-container">
+          <h1>College Complain System</h1>
+          <button class="menu-toggle" id="menu-toggle">☰</button>
+          <ul id="nav-links">
+              <li><a href="profile.html">Profile</a></li>
+              <li><a href="dashboard.html">Home</a></li>
+              <li><a href="complain.html">Complain</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Logout</a></li>
+            <!-- Add a close button inside the menu -->
+            <li><button class="close-menu" id="close-menu">✖</button></li>
+          </ul>
+        </div>
+      </nav>
+   
+    
+    <div class="container">
+       
+        <section id="complaints">
+            <h2>Submit a Complaint</h2>
+            <form id="complaintForm" enctype="multipart/form-data">
+                <label for="description">Complaint Description</label>
+                <textarea id="description" name="description" required></textarea>
+
+                <label for="department">Select Department</label>
+                <select id="department" name="department" required>
+                    <option value="CS">Computer Science (CS)</option>
+                    <option value="CE">Civil Engineering (CE)</option>
+                    <option value="EC">Electronics & Communication (EC)</option>
+                    <option value="Mechanical">Mechanical Engineering</option>
+                    <option value="Civil">Civil Engineering</option>
+                </select>
+
+                <br><br> 
+
+                <label for="complaintType">Select Complaint Type</label>
+                <select id="complaintType" name="complaintType" required>
+                    <option value="" disabled selected>Select complaint type</option>
+                    <option value="GeneralMaintenance">General Maintenance</option>
+                    <option value="TechnicalFault">Technical Fault</option>
+                    <option value="EducationRelated">Education Related</option>
+                </select>
+
+                <label for="image">Upload an Image</label>
+                <input type="file" id="image" name="image" accept="image/*" required>
+
+                <button type="submit">Submit Complaint</button>
+            </form>
+        </section>
+
+        <section id="submitted-complaints">
+            <h2>Your Submitted Complaints</h2>
+            <div id="complaintsList">
+              
+            </div>
+        </section>
+
+        <section id="stats">
+            <h2>Complaint Statistics</h2>
+            <div class="stats-cards">
+                <div class="card">
+                    <h3>Pending</h3>
+                    <p id="pendingCount">1</p>
+                </div>
+                <div class="card">
+                    <h3>Resolved</h3>
+                    <p id="resolvedCount">0</p>
+                </div>
+                <div class="card">
+                    <h3>Total Complaints</h3>
+                    <p id="totalCount">1</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    
+    <footer>
+        <p>&copy; 2024 College Complaint System</p>
+    </footer>
+    <script>
+        const menuToggle = document.getElementById('menu-toggle');
+  const closeMenu = document.getElementById('close-menu');
+  const navLinks = document.getElementById('nav-links');
+  
+  // Open menu
+  menuToggle.addEventListener('click', () => {
+    navLinks.classList.add('active');
+  });
+  
+  // Close menu
+  closeMenu.addEventListener('click', () => {
+    navLinks.classList.remove('active');
+  });
+  
+  
+          
+      </script>
+<script>
+    // Fetch complaints from localStorage when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        // Fetch complaints from localStorage
+        const complaints = JSON.parse(localStorage.getItem('complaints')) || [];
+        // If there are complaints, display them in the 'Your Submitted Complaints' section
+        complaints.forEach(displayComplaint);
+    });
+
+    // Handle complaint form submission
+    document.getElementById('complaintForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        // Gather form data
+        const description = document.getElementById('description').value;
+        const department = document.getElementById('department').value;
+        const complaintType = document.getElementById('complaintType').value;
+        const image = document.getElementById('image').files[0];
+
+        // Convert the file to a base64 string (optional for simplicity)
+        const reader = new FileReader();
+        reader.onload = function (event) {
+            const imageBase64 = event.target.result;
+
+            // Create a complaint object
+            const complaint = {
+                id: Date.now(), // Unique ID based on timestamp
+                description,
+                department,
+                complaintType,
+                image: imageBase64 || '', // Store the image as base64
+                status: 'Pending',
+                submittedBy: 'User', // Replace with actual user data if available
+                createdAt: new Date().toISOString(),
+            };
+
+            // Save complaint to local storage
+            const complaints = JSON.parse(localStorage.getItem('complaints')) || [];
+            complaints.push(complaint);
+            localStorage.setItem('complaints', JSON.stringify(complaints));
+
+            // Display the complaint in "Your Submitted Complaints" section
+            displayComplaint(complaint);
+
+            alert('Complaint submitted successfully!');
+            document.getElementById('complaintForm').reset();
+        };
+
+        if (image) {
+            reader.readAsDataURL(image);
+        } else {
+            reader.onload(); // If no image, directly handle complaint
+        }
+    });
+
+    // Function to display a complaint in the "Your Submitted Complaints" section
+    function displayComplaint(complaint) {
+        const complaintsList = document.getElementById('complaintsList');
+
+        const complaintItem = document.createElement('div');
+        complaintItem.className = 'complaint-item';
+
+        // Change background color if the complaint is resolved
+        const backgroundColor = complaint.status === 'Resolved' ? 'lightgreen' : 'white';
+
+        complaintItem.innerHTML = `
+            <div style="background-color: ${backgroundColor}">
+                <p><strong>Complaint:</strong> ${complaint.description}</p>
+                <p><strong>Department:</strong> ${complaint.department}</p>
+                <p><strong>Type:</strong> ${complaint.complaintType}</p>
+                <p><strong>Submitted By:</strong> ${complaint.submittedBy}</p>
+                <p><strong>Submitted On:</strong> ${new Date(complaint.createdAt).toLocaleString()}</p>
+                ${complaint.image ? `<img src="${complaint.image}" alt="Complaint Image">` : ''}
+                <button class="reminder-btn" onclick="setReminder()">Set Reminder</button>
+            </div>
+        `;
+
+        complaintsList.appendChild(complaintItem);
+    }
+</script>
+
+</body>
+</html>

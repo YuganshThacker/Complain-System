@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Dashboard</h1>
+        <h2>All Complaints</h2>
+        <div id="adminComplaintsList">
+            <!-- Example Complaint Item -->
+            <div class="complaint-item">
+                <div class="complaint-details">
+                    <p><strong>Complaint:</strong> there are not enough dustbin in the department</p>
+                    <p><strong>Department:</strong> General Maintenance</p>
+                    <p><strong>Submitted by:</strong> Jane Doe</p>
+                    <p><strong>Submitted to:</strong> Computer Science Department</p>
+                </div>
+                <img src="Screenshot.png" alt="Complaint Image">
+
+                
+                <button class="resolve-btn" onclick="markAsResolved(this)">Mark as Resolved</button>
+            </div>
+        </div>
+        <div class="admin-stats">
+            <div class="stat-card">
+                <h3>Total Complaints</h3>
+                <p id="adminTotalComplaints">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Pending</h3>
+                <p id="adminPendingComplaints">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Resolved</h3>
+                <p id="adminResolvedComplaints">0</p>
+            </div>
+        </div>
+    </div>
+    <script src="admin.js"></script>
+    <script>
+        // Fetch complaints from local storage and render them
+        function fetchAndRenderComplaints() {
+            const complaints = JSON.parse(localStorage.getItem('complaints')) || [];
+            const complaintsList = document.getElementById('adminComplaintsList');
+            complaintsList.innerHTML = '';
+    
+            complaints.forEach((complaint) => {
+                const item = document.createElement('div');
+                item.className = 'complaint-item';
+                if (complaint.status === 'Resolved') {
+                    item.classList.add('resolved');
+                }
+    
+                const image = complaint.image
+                    ? `<img src="${complaint.image}" alt="Complaint Image" class="complaint-image">`
+                    : '';
+    
+                item.innerHTML = `
+                    <div class="complaint-header">
+                        <span>#${complaint.id}</span>
+                        <span class="${complaint.status === 'Resolved' ? 'status-resolved' : 'status-pending'}">
+                            ${complaint.status}
+                        </span>
+                    </div>
+                    <p><strong>Description:</strong> ${complaint.description}</p>
+                    <p><strong>Department:</strong> ${complaint.department}</p>
+                    <p><strong>Type:</strong> ${complaint.complaintType}</p>
+                    <p><strong>Submitted By:</strong> ${complaint.submittedBy}</p>
+                    <p><strong>Submitted On:</strong> ${new Date(complaint.createdAt).toLocaleString()}</p>
+                    ${image}
+                    <button onclick="markAsResolved(${complaint.id})">Mark as Resolved</button>
+                    <button onclick="deleteComplaint(${complaint.id})" class="delete-btn">Delete</button>
+                `;
+                complaintsList.appendChild(item);
+            });
+    
+            // Update statistics
+            updateStatistics(complaints);
+        }
+    
+        // Mark a complaint as resolved
+        function markAsResolved(id) {
+            const complaints = JSON.parse(localStorage.getItem('complaints')) || [];
+            const complaintIndex = complaints.findIndex((complaint) => complaint.id === id);
+    
+            if (complaintIndex !== -1) {
+                complaints[complaintIndex].status = 'Resolved';
+                localStorage.setItem('complaints', JSON.stringify(complaints));
+    
+                // Mark the complaint as resolved in the DOM
+                const complaintItem = document.querySelector(`.complaint-item[data-id="${id}"]`);
+                if (complaintItem) {
+                    complaintItem.classList.add('resolved');
+                }
+    
+                fetchAndRenderComplaints(); // Refresh the list
+            }
+        }
+    
+        // Delete a complaint
+        function deleteComplaint(id) {
+            const complaints = JSON.parse(localStorage.getItem('complaints')) || [];
+            const updatedComplaints = complaints.filter((complaint) => complaint.id !== id);
+    
+            localStorage.setItem('complaints', JSON.stringify(updatedComplaints));
+            fetchAndRenderComplaints(); // Refresh the list
+        }
+    
+        // Update complaint statistics
+        function updateStatistics(complaints) {
+            const total = complaints.length;
+            const pending = complaints.filter((complaint) => complaint.status === 'Pending').length;
+            const resolved = complaints.filter((complaint) => complaint.status === 'Resolved').length;
+    
+            document.getElementById('adminTotalComplaints').textContent = total;
+            document.getElementById('adminPendingComplaints').textContent = pending;
+            document.getElementById('adminResolvedComplaints').textContent = resolved;
+        }
+    
+        // Load complaints on page load
+        document.addEventListener('DOMContentLoaded', fetchAndRenderComplaints);
+    </script>
+    <script>
+        // Function to mark a complaint as resolved
+        function markResolved(complaintId) {
+            // Get the complaints from localStorage
+            const complaints = JSON.parse(localStorage.getItem('complaints')) || [];
+    
+            // Find the complaint by its ID and update its status
+            const complaint = complaints.find(c => c.id === complaintId);
+            if (complaint) {
+                complaint.status = 'Resolved';
+    
+                // Save the updated complaints back to localStorage
+                localStorage.setItem('complaints', JSON.stringify(complaints));
+    
+                // Optionally, you can also update the UI of the admin panel
+                document.querySelector(`.complaint-item[data-id="${complaintId}"]`)
+                    .querySelector('button')
+                    .textContent = 'Resolved';
+    
+                alert('Complaint marked as resolved');
+            }
+        }
+    </script>
+
+<script>
+    // Function to mark a complaint as resolved
+    function markResolved(complaintId) {
+        // Get the complaints from localStorage
+        const complaints = JSON.parse(localStorage.getItem('complaints')) || [];
+
+        // Find the complaint by its ID and update its status
+        const complaint = complaints.find(c => c.id === complaintId);
+        if (complaint) {
+            complaint.status = 'Resolved';
+
+            // Save the updated complaints back to localStorage
+            localStorage.setItem('complaints', JSON.stringify(complaints));
+
+            // Optionally, you can also update the UI of the admin panel
+            document.querySelector(`.complaint-item[data-id="${complaintId}"]`)
+                .querySelector('button')
+                .textContent = 'Resolved';
+
+            alert('Complaint marked as resolved');
+        }
+    }
+</script>
+</body>
+</html>

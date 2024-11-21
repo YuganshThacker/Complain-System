@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+          <h1>College Complain System</h1>
+          <button class="menu-toggle" id="menu-toggle">☰</button>
+          <ul id="nav-links">
+              <li><a href="profile.html">Profile</a></li>
+              <li><a href="dashboard.html">Home</a></li>
+              <li><a href="complain.html">Complain</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Logout</a></li>
+            <!-- Add a close button inside the menu -->
+            <li><button class="close-menu" id="close-menu">✖</button></li>
+          </ul>
+        </div>
+      </nav>
+   
+      <section id="carousel">
+        <div class="carousel-container">
+            <div class="carousel-slide">
+                <img src="images/img.jpg" alt="Delicious Food 1">
+                <img src="images/c.jpg" alt="Delicious Food 3">
+                <img src="images/b.jpg" alt="Delicious Food 2">
+                <img src="images/d.jpg" alt="Delicious Food 4">
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+<section id="about-us">
+    <div class="about-container">
+        <h2>About Us</h2>
+        <p>
+            Welcome to the <strong>CHARUSAT Student Complaint System</strong>, your trusted platform for creating a cleaner, more efficient campus environment.
+        </p>
+        <p>
+            Our mission is to bridge the gap between students and the administration by providing a streamlined process to address issues effectively. Whether it's a maintenance problem, cleanliness concern, or general feedback, this system ensures your voice is heard and your concerns are addressed promptly.
+        </p>
+        <h3>Why Choose Us?</h3>
+        <ul>
+            <li><strong>User-Friendly Platform:</strong> Submit complaints with ease through an intuitive interface.</li>
+            <li><strong>Real-Time Tracking:</strong> Stay updated on the status of your complaints at every step.</li>
+            <li><strong>Commitment to Excellence:</strong> Our dedicated team ensures a quick response and resolution to all concerns.</li>
+        </ul>
+    </div>
+</section>
+
+
+    <footer>
+        <p>&copy; 2024 College Complaint System</p>
+    </footer>
+
+    <script>
+      const menuToggle = document.getElementById('menu-toggle');
+const closeMenu = document.getElementById('close-menu');
+const navLinks = document.getElementById('nav-links');
+
+// Open menu
+menuToggle.addEventListener('click', () => {
+  navLinks.classList.add('active');
+});
+
+// Close menu
+closeMenu.addEventListener('click', () => {
+  navLinks.classList.remove('active');
+});
+
+
+        
+    </script>
+</body>
+</html>
